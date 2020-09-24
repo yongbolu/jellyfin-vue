@@ -214,4 +214,11 @@ export default Vue.extend({
     max-width: 90vw;
   }
 }
+
+.theme--dark .v-dialog__content >>> .v-dialog {
+  background-color: #1e1e1e;
+}
+.theme--light .v-dialog__content >>> .v-dialog {
+  background-color: #fff;
+}
 </style>
