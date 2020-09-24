@@ -49,7 +49,7 @@
 
             <v-dialog v-model="identifyDialog" width="500">
               <identify-item
-                :itemId="item.Id"
+                :item="item"
                 @identified="identifyDialog = false"
               />
             </v-dialog>
