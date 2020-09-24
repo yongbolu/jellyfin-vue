@@ -30,7 +30,29 @@
               :to="`./${item.Id}/play`"
               >{{ $t('playType', { mediaType: item.Type }) }}</v-btn
             >
-            <v-btn>{{ $t('more') }}</v-btn>
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn color="primary" v-bind="attrs" v-on="on">
+                  {{ $t('more') }}
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="(option, index) in moreOptions"
+                  :key="index"
+                  @click="openDialog(option)"
+                >
+                  <v-list-item-title>{{ option.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
+            <v-dialog v-model="identifyDialog" width="500">
+              <identify-item
+                :itemId="item.Id"
+                @identified="identifyDialog = false"
+              />
+            </v-dialog>
           </div>
         </div>
       </div>
@@ -46,12 +68,19 @@ import { BaseItemDto } from '~/api';
 import imageHelper from '~/mixins/imageHelper';
 import timeUtils from '~/mixins/timeUtils';
 
+interface MoreOptions {
+  title: string;
+  name: string;
+}
+
 export default Vue.extend({
   mixins: [imageHelper, timeUtils],
   data() {
     return {
       item: {} as BaseItemDto,
-      backdropImageSource: ''
+      backdropImageSource: '',
+      moreOptions: [] as MoreOptions[],
+      identifyDialog: false
     };
   },
 
@@ -68,10 +97,35 @@ export default Vue.extend({
     this.item = Item[0];
 
     this.updateBackdropImage();
+
+    this.getMoreOptions();
   },
   methods: {
     getAspectRatio() {
       return window.innerWidth / window.innerHeight;
+    },
+    /*
+     * returns an array of options for the 'more' button
+     */
+    getMoreOptions() {
+      if (this.$auth.user.Policy.IsAdministrator) {
+        this.moreOptions.push({
+          title: this.$t('identify').toString(),
+          name: 'identify'
+        });
+      }
+    },
+    /*
+     * Opens/closes the relevant dialog
+     */
+    openDialog(option: MoreOptions) {
+      switch (option.name) {
+        case 'identify':
+          this.identifyDialog = true;
+          break;
+        default:
+          break;
+      }
     },
     getItemBackdrop(id: string): string {
       if (window.innerWidth < window.innerHeight) {
