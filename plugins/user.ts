@@ -1,7 +1,12 @@
 import { Plugin } from '@nuxt/types';
 
 interface UserStore {
-  set: (id: string, serverUrl: string, accessToken: string) => void;
+  set: (
+    id: string,
+    serverUrl: string,
+    accessToken: string,
+    apiKey: string
+  ) => void;
   clear: () => void;
 }
 
@@ -29,7 +34,12 @@ declare module 'vuex/types/index' {
 
 const userPlugin: Plugin = (context, inject) => {
   const user = {
-    set: async (id: string, serverUrl: string, accessToken: string) => {
+    set: async (
+      id: string,
+      serverUrl: string,
+      accessToken: string,
+      apiKey: string
+    ) => {
       const response = await context.$displayPreferencesApi.getDisplayPreferences(
         { displayPreferencesId: 'usersettings', userId: id, client: 'vue' }
       );
@@ -38,7 +48,8 @@ const userPlugin: Plugin = (context, inject) => {
         id,
         serverUrl,
         accessToken,
-        displayPreferences: response.data.CustomPrefs
+        displayPreferences: response.data.CustomPrefs,
+        apiKey
       });
     },
     clear: () => {

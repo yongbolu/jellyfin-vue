@@ -1,4 +1,5 @@
 import { Plugin } from '@nuxt/types';
+import { stringify } from 'qs';
 
 const userInitPlugin: Plugin = async (context) => {
   if (
@@ -15,6 +16,22 @@ const userInitPlugin: Plugin = async (context) => {
     });
 
     context.$auth.setUser(response.data);
+
+    await context.$sessionApi.postFullCapabilities({
+      clientCapabilities: {
+        PlayableMediaTypes: ['Audio', 'Video'],
+        SupportsMediaControl: true,
+        SupportsPersistentIdentifier: false
+      }
+    });
+
+    const socketParams = stringify({
+      api_key: context.store.state.user.apiKey,
+      deviceId: context.store.state.deviceProfile.deviceId
+    });
+    let socketUrl = `${this.$axios.defaults.baseURL}/socket${socketParams}`;
+    socketUrl = socketUrl.replace('https:', 'wss:');
+    socketUrl = socketUrl.replace('http:', 'ws:');
   }
 };
 

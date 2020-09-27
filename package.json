@@ -36,6 +36,7 @@
     "nuxt-vuex-localstorage": "^1.2.7",
     "qs": "^6.9.4",
     "uuid": "^8.3.0",
+    "vue-native-websocket": "^2.0.14",
     "vueperslides": "^2.10.8"
   },
   "devDependencies": {

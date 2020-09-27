@@ -42,6 +42,7 @@ export default Vue.extend({
             this.$auth.logout();
             this.$deviceProfile.clear();
             this.$user.clear();
+            this.$disconnect();
           }
         }
       ]

@@ -51,6 +51,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { stringify } from 'qs';
 
 export default Vue.extend({
   data() {
@@ -89,7 +90,30 @@ export default Vue.extend({
         this.$auth.setUserToken(accessToken);
 
         this.$auth.setUser(response.data.User);
-        this.$user.set(response.data.User.Id, this.serverUrl, accessToken);
+        this.$user.set(
+          response.data.User.Id,
+          this.serverUrl,
+          accessToken,
+          response.data.AccessToken
+        );
+
+        const socketParams = stringify({
+          api_key: response.data.AccessToken,
+          deviceId: this.$store.state.deviceProfile.deviceId
+        });
+        let socketUrl = `${this.$axios.defaults.baseURL}/socket${socketParams}`;
+        socketUrl = socketUrl.replace('https:', 'wss:');
+        socketUrl = socketUrl.replace('http:', 'ws:');
+
+        await this.$sessionApi.postFullCapabilities({
+          clientCapabilities: {
+            PlayableMediaTypes: ['Audio', 'Video'],
+            SupportsMediaControl: true,
+            SupportsPersistentIdentifier: false
+          }
+        });
+
+        this.$connect(socketUrl);
       } catch (error) {
         let errorMessage = this.$t('unexpectedError');
 

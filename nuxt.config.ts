@@ -48,6 +48,7 @@ const config: NuxtConfig = {
     // Utility
     'plugins/browserDetection.ts',
     'plugins/deviceProfile.ts',
+    'plugins/nativeSocketPlugin.ts',
     'plugins/page.ts',
     'plugins/playbackProfile.ts',
     'plugins/snackbar.ts',
@@ -57,6 +58,7 @@ const config: NuxtConfig = {
     'plugins/imageApi.ts',
     'plugins/itemsApi.ts',
     'plugins/libraryApi.ts',
+    'plugins/sessionApiPlugin.ts',
     'plugins/tvShowsApi.ts',
     'plugins/userApi.ts',
     'plugins/userLibraryApi.ts',
