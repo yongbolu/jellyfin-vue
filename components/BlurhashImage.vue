@@ -3,20 +3,31 @@
     <transition-group mode="in-out" name="fade" class="absolute">
       <blurhash-canvas
         v-if="
-          item.ImageBlurHashes &&
-          item.ImageBlurHashes.Primary &&
-          item.ImageTags &&
-          item.ImageTags.Primary
+          (imageType === 'Primary' &&
+            item.ImageBlurHashes &&
+            item.ImageBlurHashes.Primary &&
+            item.ImageTags &&
+            item.ImageTags.Primary) ||
+          (imageType === 'Backdrop' &&
+            item.ImageBlurHashes &&
+            item.ImageBlurHashes.Backdrop &&
+            item.ImageTags &&
+            item.BackdropImageTags)
         "
         key="canvas"
-        :hash="item.ImageBlurHashes.Primary[item.ImageTags.Primary]"
+        :hash="getImageHash"
         :width="width"
         :height="height"
         :punch="punch"
         class="absolute"
       />
       <img
-        v-if="item.ImageTags && item.ImageTags.Primary"
+        v-if="
+          (imageType === 'Primary' &&
+            item.ImageTags &&
+            item.ImageTags.Primary) ||
+          (imageType === 'Backdrop' && item.ImageTags && item.BackdropImageTags)
+        "
         key="image"
         class="absolute"
         :src="image"
@@ -60,6 +71,36 @@ export default Vue.extend({
     return {
       image: ''
     };
+  },
+  computed: {
+    getImageHash(): string {
+      if (
+        this.imageType === ImageType.Backdrop &&
+        this.item?.BackdropImageTags?.[0] &&
+        this.item?.ImageBlurHashes?.Backdrop
+      ) {
+        return this.item?.ImageBlurHashes?.Backdrop?.[
+          this.item?.BackdropImageTags?.[0]
+        ];
+      } else if (
+        this.imageType === ImageType.Backdrop &&
+        this.item?.ImageTags?.Thumb &&
+        this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb]
+      ) {
+        return this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb];
+      }
+      if (
+        this.item?.ImageTags?.Primary &&
+        this.item.ImageBlurHashes?.Primary?.[this.item?.ImageTags?.Primary]
+      )
+        return this.item.ImageBlurHashes?.Primary?.[
+          this.item?.ImageTags?.Primary
+        ];
+      // It should never reach this since there are v-ifs above that shouldn't call
+      // getImagehash() if the relavent image tags are not there. But in the case that it does
+      // This hash is here to prevent errors.
+      return 'L7F$k?_*41GX^]KhTnJ8G?OXvz#;';
+    }
   },
   mounted(): void {
     if (this.item.ImageTags && this.item.ImageTags.Primary) {
