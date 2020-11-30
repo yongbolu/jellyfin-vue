@@ -8,6 +8,7 @@
           <blurhash-image
             v-if="item.ImageTags && item.ImageTags.Primary"
             :item="item"
+            :image-type="getImageType"
             class="card-image"
           />
           <v-chip
@@ -68,7 +69,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import imageHelper from '~/mixins/imageHelper';
-import { BaseItemDto } from '~/api';
+import { BaseItemDto, ImageType } from '~/api';
 
 export default Vue.extend({
   mixins: [imageHelper],
@@ -203,6 +204,16 @@ export default Vue.extend({
         return `${this.item.ProductionYear} - ${endYear}`;
       }
       return '';
+    },
+    /**
+     * @returns {ImageType} Returns the relavent Image type based on the card size and item type
+     */
+    getImageType(): ImageType {
+      if (this.shape === 'thumb-card' && this.item.Type === 'Movie') {
+        return ImageType.Backdrop;
+      } else {
+        return ImageType.Primary;
+      }
     },
     progress: {
       get(): number | false {

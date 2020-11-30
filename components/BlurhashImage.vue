@@ -38,6 +38,11 @@ export default Vue.extend({
       type: Object as () => BaseItemDto,
       required: true
     },
+    imageType: {
+      type: String as () => ImageType.Primary,
+      required: false,
+      default: ImageType.Primary
+    },
     width: {
       type: Number,
       default: 32
@@ -59,11 +64,7 @@ export default Vue.extend({
   mounted(): void {
     if (this.item.ImageTags && this.item.ImageTags.Primary) {
       const card = this.$refs.card as HTMLElement;
-      this.image = this.getImageUrlForElement(
-        card,
-        this.item,
-        ImageType.Primary
-      );
+      this.image = this.getImageUrlForElement(card, this.item, this.imageType);
     }
   }
 });
