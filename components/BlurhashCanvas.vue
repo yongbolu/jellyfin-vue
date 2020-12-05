@@ -1,5 +1,13 @@
 <template>
-  <canvas ref="canvas" :width="width" :height="height" />
+  <div>
+    <canvas
+      v-if="validHash"
+      ref="canvas"
+      :width="width"
+      :height="height"
+      class="fill"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -25,6 +33,11 @@ export default Vue.extend({
       default: 1
     }
   },
+  data() {
+    return {
+      validHash: true
+    };
+  },
   watch: {
     hash() {
       this.$nextTick(() => {
@@ -37,16 +50,27 @@ export default Vue.extend({
   },
   methods: {
     draw() {
-      const pixels = decode(this.hash, this.width, this.height);
-      if (pixels) {
-        const ctx = (this.$refs.canvas as HTMLCanvasElement).getContext('2d');
-        const imageData = ctx?.createImageData(this.width, this.height);
-        if (imageData) {
-          imageData.data.set(pixels);
-          ctx?.putImageData(imageData, 0, 0);
+      try {
+        const pixels = decode(this.hash, this.width, this.height);
+        if (pixels) {
+          const ctx = (this.$refs.canvas as HTMLCanvasElement).getContext('2d');
+          const imageData = ctx?.createImageData(this.width, this.height);
+          if (imageData) {
+            imageData.data.set(pixels);
+            ctx?.putImageData(imageData, 0, 0);
+          }
         }
+      } catch {
+        this.validHash = false;
       }
     }
   }
 });
 </script>
+
+<style scoped>
+.fill {
+  width: 100%;
+  height: 100%;
+}
+</style>
