@@ -59,50 +59,62 @@ export default Vue.extend({
   computed: {
     getImageHash(): string {
       if (
-        this.imageType === ImageType.Backdrop &&
-        this.item?.BackdropImageTags?.[0] &&
-        this.item?.ImageBlurHashes?.Backdrop
-      ) {
-        return this.item?.ImageBlurHashes?.Backdrop?.[
-          this.item?.BackdropImageTags?.[0]
-        ];
-      } else if (
-        this.imageType === ImageType.Backdrop &&
-        this.item?.ImageTags?.Thumb &&
-        this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb]
-      ) {
-        return this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb];
-      }
-      if (
+        this.imageType === ImageType.Primary &&
         this.item?.ImageTags?.Primary &&
         this.item.ImageBlurHashes?.Primary?.[this.item?.ImageTags?.Primary]
       )
         return this.item.ImageBlurHashes?.Primary?.[
           this.item?.ImageTags?.Primary
         ];
+
+      if (
+        this.imageType === ImageType.Thumb &&
+        this.item?.ImageTags?.Thumb &&
+        this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb]
+      ) {
+        return this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb];
+      }
+
+      if (
+        (this.imageType === ImageType.Backdrop ||
+          this.imageType === ImageType.Thumb) &&
+        this.item?.BackdropImageTags?.[0] &&
+        this.item?.ImageBlurHashes?.Backdrop
+      ) {
+        return this.item?.ImageBlurHashes?.Backdrop?.[
+          this.item?.BackdropImageTags?.[0]
+        ];
+      }
+
       return '';
     },
     checkImage(): boolean {
       if (
-        (this.imageType === 'Primary' &&
+        (this.imageType === ImageType.Primary &&
           this.item.ImageTags &&
           this.item.ImageTags.Primary) ||
-        (this.imageType === 'Backdrop' &&
+        (this.imageType === ImageType.Backdrop &&
           this.item.ImageTags &&
-          this.item.BackdropImageTags)
+          this.item.BackdropImageTags) ||
+        (this.imageType === ImageType.Thumb &&
+          this.item.ImageTags &&
+          this.item.ImageTags.Thumb)
       ) {
         return true;
       } else return false;
     },
     checkImageHash(): boolean {
       if (
-        (this.imageType === 'Primary' &&
+        (this.imageType === ImageType.Primary &&
           this.item.ImageBlurHashes?.Primary &&
           this.item.ImageTags?.Primary) ||
-        (this.imageType === 'Backdrop' &&
+        (this.imageType === ImageType.Backdrop &&
           this.item.ImageBlurHashes?.Backdrop &&
           this.item.ImageTags &&
-          this.item.BackdropImageTags)
+          this.item.BackdropImageTags) ||
+        (this.imageType === ImageType.Thumb &&
+          this.item.ImageBlurHashes?.Thumb &&
+          this.item.ImageTags?.Thumb)
       ) {
         return true;
       }
