@@ -60,9 +60,12 @@ const config: NuxtConfig = {
   plugins: [
     // General
     'plugins/appInitPlugin.ts',
+    'plugins/veeValidate.ts',
     // Components
+    'plugins/components/swiper.ts',
     'plugins/components/vueperSlides.ts',
     'plugins/components/vueVirtualScroller.ts',
+    'plugins/components/veeValidate.ts',
     // Utility
     'plugins/browserDetection.ts',
     'plugins/playbackProfile.ts',
@@ -109,7 +112,9 @@ const config: NuxtConfig = {
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    baseURL: ''
+  },
   /*
    ** Axios-based Authentication
    ** See https://auth.nuxtjs.org/schemes/local.html#options
@@ -223,7 +228,7 @@ const config: NuxtConfig = {
         ];
       }
     },
-    transpile: ['@nuxtjs/auth']
+    transpile: ['@nuxtjs/auth', 'vee-validate/dist/rules']
   },
 
   /**
