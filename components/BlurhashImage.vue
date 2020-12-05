@@ -2,18 +2,7 @@
   <div ref="card" class="absolute">
     <transition-group mode="in-out" name="fade" class="absolute">
       <blurhash-canvas
-        v-if="
-          (imageType === 'Primary' &&
-            item.ImageBlurHashes &&
-            item.ImageBlurHashes.Primary &&
-            item.ImageTags &&
-            item.ImageTags.Primary) ||
-          (imageType === 'Backdrop' &&
-            item.ImageBlurHashes &&
-            item.ImageBlurHashes.Backdrop &&
-            item.ImageTags &&
-            item.BackdropImageTags)
-        "
+        v-if="checkImageHash"
         key="canvas"
         :hash="getImageHash"
         :width="width"
@@ -22,12 +11,7 @@
         class="absolute"
       />
       <img
-        v-if="
-          (imageType === 'Primary' &&
-            item.ImageTags &&
-            item.ImageTags.Primary) ||
-          (imageType === 'Backdrop' && item.ImageTags && item.BackdropImageTags)
-        "
+        v-if="checkImage"
         key="image"
         class="absolute"
         :src="image"
@@ -50,7 +34,7 @@ export default Vue.extend({
       required: true
     },
     imageType: {
-      type: String as () => ImageType.Primary,
+      type: String as () => ImageType,
       required: false,
       default: ImageType.Primary
     },
@@ -96,10 +80,33 @@ export default Vue.extend({
         return this.item.ImageBlurHashes?.Primary?.[
           this.item?.ImageTags?.Primary
         ];
-      // It should never reach this since there are v-ifs above that shouldn't call
-      // getImagehash() if the relavent image tags are not there. But in the case that it does
-      // This hash is here to prevent errors.
-      return 'L7F$k?_*41GX^]KhTnJ8G?OXvz#;';
+      return '';
+    },
+    checkImage(): boolean {
+      if (
+        (this.imageType === 'Primary' &&
+          this.item.ImageTags &&
+          this.item.ImageTags.Primary) ||
+        (this.imageType === 'Backdrop' &&
+          this.item.ImageTags &&
+          this.item.BackdropImageTags)
+      ) {
+        return true;
+      } else return false;
+    },
+    checkImageHash(): boolean {
+      if (
+        (this.imageType === 'Primary' &&
+          this.item.ImageBlurHashes?.Primary &&
+          this.item.ImageTags?.Primary) ||
+        (this.imageType === 'Backdrop' &&
+          this.item.ImageBlurHashes?.Backdrop &&
+          this.item.ImageTags &&
+          this.item.BackdropImageTags)
+      ) {
+        return true;
+      }
+      return false;
     }
   },
   mounted(): void {
