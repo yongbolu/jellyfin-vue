@@ -59,32 +59,36 @@ export default Vue.extend({
   },
   computed: {
     getImageHash(): string {
-      if (
-        this.imageType === ImageType.Primary &&
-        this.item?.ImageTags?.Primary &&
-        this.item.ImageBlurHashes?.Primary?.[this.item?.ImageTags?.Primary]
-      )
-        return this.item.ImageBlurHashes?.Primary?.[
-          this.item?.ImageTags?.Primary
-        ];
-
-      if (
-        this.imageType === ImageType.Thumb &&
-        this.item?.ImageTags?.Thumb &&
-        this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb]
-      ) {
-        return this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb];
-      }
-
-      if (
-        (this.imageType === ImageType.Backdrop ||
-          this.imageType === ImageType.Thumb) &&
-        this.item?.BackdropImageTags?.[0] &&
-        this.item?.ImageBlurHashes?.Backdrop
-      ) {
-        return this.item?.ImageBlurHashes?.Backdrop?.[
-          this.item?.BackdropImageTags?.[0]
-        ];
+      switch (this.imageType) {
+        case ImageType.Primary:
+          if (
+            this.item?.ImageTags?.Primary &&
+            this.item.ImageBlurHashes?.Primary?.[this.item?.ImageTags?.Primary]
+          ) {
+            return this.item.ImageBlurHashes?.Primary?.[
+              this.item?.ImageTags?.Primary
+            ];
+          }
+          break;
+        case ImageType.Thumb:
+          if (
+            this.item?.ImageTags?.Thumb &&
+            this.item.ImageBlurHashes?.Thumb?.[this.item?.ImageTags?.Thumb]
+          ) {
+            return this.item.ImageBlurHashes?.Thumb?.[
+              this.item?.ImageTags?.Thumb
+            ];
+          }
+        // eslint-disable-next-line no-fallthrough
+        case ImageType.Backdrop || ImageType.Thumb:
+          if (
+            this.item?.BackdropImageTags?.[0] &&
+            this.item?.ImageBlurHashes?.Backdrop
+          ) {
+            return this.item?.ImageBlurHashes?.Backdrop?.[
+              this.item?.BackdropImageTags?.[0]
+            ];
+          }
       }
 
       return '';
