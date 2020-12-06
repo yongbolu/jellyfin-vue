@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { decode } from 'blurhash';
+import { decode, isBlurhashValid } from 'blurhash';
 
 export default Vue.extend({
   props: {
@@ -50,18 +50,18 @@ export default Vue.extend({
   },
   methods: {
     draw() {
-      try {
-        const pixels = decode(this.hash, this.width, this.height);
-        if (pixels) {
-          const ctx = (this.$refs.canvas as HTMLCanvasElement).getContext('2d');
-          const imageData = ctx?.createImageData(this.width, this.height);
-          if (imageData) {
-            imageData.data.set(pixels);
-            ctx?.putImageData(imageData, 0, 0);
-          }
-        }
-      } catch {
+      if (!isBlurhashValid(this.hash).result) {
         this.validHash = false;
+        return;
+      }
+      const pixels = decode(this.hash, this.width, this.height);
+      if (pixels) {
+        const ctx = (this.$refs.canvas as HTMLCanvasElement).getContext('2d');
+        const imageData = ctx?.createImageData(this.width, this.height);
+        if (imageData) {
+          imageData.data.set(pixels);
+          ctx?.putImageData(imageData, 0, 0);
+        }
       }
     }
   }
