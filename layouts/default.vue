@@ -89,6 +89,7 @@
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <v-text-field
+        v-model="searchQuery"
         class="search-input"
         prepend-inner-icon="mdi-magnify"
         placeholder="Search"
@@ -124,6 +125,14 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('page', ['opaqueAppBar']),
+    searchQuery: {
+      get() {
+        return this.$store.state.search.query;
+      },
+      set(value: string) {
+        this.setSearchQuery({ query: value });
+      }
+    },
     items() {
       return [
         {
@@ -146,11 +155,20 @@ export default Vue.extend({
       ];
     }
   },
+  watch: {
+    searchQuery(newQuery: string, oldQuery: string) {
+      // If neither the old nor the new query are empty, we don't want to move.
+      if (newQuery !== '' && oldQuery === '') {
+        this.$router.push({ name: 'search' });
+      }
+    }
+  },
   beforeMount() {
     this.refreshUserViews();
   },
   methods: {
-    ...mapActions('userViews', ['refreshUserViews'])
+    ...mapActions('userViews', ['refreshUserViews']),
+    ...mapActions('search', ['setSearchQuery'])
   }
 });
 </script>
